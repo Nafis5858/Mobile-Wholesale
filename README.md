@@ -31,7 +31,10 @@ This repository contains a MERN stack application for a wholesale mobile platfor
 
 ### Option 1: Host backend on Railway / Render / Heroku
 - Deploy `backend/` as a Node.js app
-- Configure `MONGODB_URI` and `JWT_SECRET`
+- Use the `backend/` folder as the service root
+- Set `MONGODB_URI` and `JWT_SECRET` in service environment variables
+- If Railway marks the app as "unexposed," make sure the service type is Node.js/HTTP and the app root is `backend/`
+- Alternative: use the provided `render.yaml` for Render automatic service setup
 
 ### Option 2: Host frontend on Vercel / Netlify
 - Deploy `frontend/` as a static React app

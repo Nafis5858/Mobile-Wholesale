@@ -1,0 +1,27 @@
+services:
+  - type: web_service
+    name: mobile-wholesale-backend
+    env: node
+    repo: https://github.com/Nafis5858/Mobile-Wholesale
+    branch: main
+    path: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+  - type: static_site
+    name: mobile-wholesale-frontend
+    env: static
+    repo: https://github.com/Nafis5858/Mobile-Wholesale
+    branch: main
+    path: frontend
+    plan: free
+    buildCommand: npm install && npm run build
+    publishPath: build
+    envVars:
+      - key: REACT_APP_API_URL
+        sync: false
