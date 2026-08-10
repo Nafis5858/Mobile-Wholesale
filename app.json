@@ -1,0 +1,21 @@
+{
+  "name": "mobile-wholesale-backend",
+  "description": "MERN backend for Mobile Wholesale app",
+  "scripts": {
+    "postdeploy": "echo Backend deployed"
+  },
+  "env": {
+    "MONGODB_URI": {
+      "description": "MongoDB Atlas connection string"
+    },
+    "JWT_SECRET": {
+      "description": "JWT secret used for authentication"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  }
+}

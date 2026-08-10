@@ -4,6 +4,7 @@
   "scripts": {
     "start": "npm --prefix backend start",
     "postinstall": "npm --prefix backend install",
+    "heroku-postbuild": "npm install --prefix frontend && npm run build --prefix frontend",
     "build": "npm --prefix frontend run build"
   }
 }
