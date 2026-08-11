@@ -67,7 +67,7 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/reviews" element={<ReviewsPage />} />
         <Route path="/orders" element={user ? <OrdersPage user={user} /> : <Navigate to="/login" />} />
-        <Route path="/admin" element={user?.role === 'admin' ? <AdminPage onLogout={handleLogout} /> : <Navigate to="/login" />} />
+        <Route path="/admin" element={user?.role === 'admin' ? <AdminPage /> : <Navigate to="/login" />} />
         <Route path="/admin/contact" element={user?.role === 'admin' ? <AdminContactPage /> : <Navigate to="/login" />} />
         <Route path="/admin/gallery" element={user?.role === 'admin' ? <AdminGalleryPage /> : <Navigate to="/login" />} />
         <Route path="/contact" element={<ContactPage contactInfo={contactInfo} />} />

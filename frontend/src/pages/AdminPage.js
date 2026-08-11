@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import api from '../api';
 
-const AdminPage = ({ onLogout }) => {
+const AdminPage = () => {
   const [products, setProducts] = useState([]);
   const [message, setMessage] = useState('');
-  const [form, setForm] = useState({ name: '', brand: '', description: '', price: '', stock: '', imageUrl: '', imageFile: null });
+  const [form, setForm] = useState({ name: '', brand: '', description: '', price: '', stock: '', imageFile: null });
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -39,13 +39,11 @@ const AdminPage = ({ onLogout }) => {
       formData.append('stock', Number(form.stock));
       if (form.imageFile) {
         formData.append('imageFile', form.imageFile);
-      } else if (form.imageUrl) {
-        formData.append('imageUrl', form.imageUrl);
       }
 
       const response = await api.post('/products', formData);
       setProducts((prev) => [response.data, ...prev]);
-      setForm({ name: '', brand: '', description: '', price: '', stock: '', imageUrl: '', imageFile: null });
+      setForm({ name: '', brand: '', description: '', price: '', stock: '', imageFile: null });
       setMessage('Product created.');
     } catch (error) {
       setMessage(error.response?.data?.message || 'Could not create product.');
@@ -70,9 +68,6 @@ const AdminPage = ({ onLogout }) => {
           <h1>Admin Panel</h1>
           <p>Manage products, gallery images, and static site content.</p>
         </div>
-        <div>
-          <button className="button logout-button" onClick={onLogout}>Logout</button>
-        </div>
       </header>
       {message && <p className="status-message">{message}</p>}
       <section className="hero-card">
@@ -90,8 +85,6 @@ const AdminPage = ({ onLogout }) => {
           <input name="stock" type="number" value={form.stock} onChange={handleChange} required />
           <label>Product Image</label>
           <input name="imageFile" type="file" accept="image/*" onChange={handleChange} />
-          <label>Image URL (optional fallback)</label>
-          <input name="imageUrl" value={form.imageUrl} onChange={handleChange} />
           <button type="submit">Create Product</button>
         </form>
       </section>
