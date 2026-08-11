@@ -8,6 +8,7 @@ const ProductDetailPage = ({ user }) => {
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState('');
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -24,6 +25,10 @@ const ProductDetailPage = ({ user }) => {
   const handleAddToCart = () => {
     if (!user) {
       setMessage('Please login first to add products to cart.');
+      return;
+    }
+    if (isAdmin) {
+      setMessage('Admin users cannot add products to the cart.');
       return;
     }
     if (!product) return;
@@ -49,6 +54,10 @@ const ProductDetailPage = ({ user }) => {
   const handleBuyNow = async () => {
     if (!user) {
       setMessage('Please login first to buy now.');
+      return;
+    }
+    if (isAdmin) {
+      setMessage('Admin users cannot purchase products.');
       return;
     }
     if (!product) return;
@@ -89,28 +98,34 @@ const ProductDetailPage = ({ user }) => {
               <span className="product-price">Tk {product.price.toFixed(2)}</span>
               <span className="product-stock">Stock: {product.stock}</span>
             </div>
-            <div className="detail-actions">
-              <div className="quantity-row">
-                <label>Quantity</label>
-                <input
-                  type="number"
-                  min="1"
-                  max={product.stock}
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                />
-              </div>
-              <button className="button" onClick={handleAddToCart} disabled={product.stock < 1}>
-                Add to Cart
-              </button>
-              <button className="button button-secondary" onClick={handleBuyNow} disabled={product.stock < 1}>
-                Buy Now
-              </button>
-            </div>
-            {!user && (
-              <div className="detail-login-note">
-                <p>Please <Link to="/login">login</Link> first to order or add to cart.</p>
-              </div>
+            {user?.role !== 'admin' ? (
+              <>
+                <div className="detail-actions">
+                  <div className="quantity-row">
+                    <label>Quantity</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max={product.stock}
+                      value={quantity}
+                      onChange={(e) => setQuantity(e.target.value)}
+                    />
+                  </div>
+                  <button className="button" onClick={handleAddToCart} disabled={product.stock < 1}>
+                    Add to Cart
+                  </button>
+                  <button className="button button-secondary" onClick={handleBuyNow} disabled={product.stock < 1}>
+                    Buy Now
+                  </button>
+                </div>
+                {!user && (
+                  <div className="detail-login-note">
+                    <p>Please <Link to="/login">login</Link> first to order or add to cart.</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className="status-message">Admin users cannot order or view product purchase details.</p>
             )}
           </div>
         </div>

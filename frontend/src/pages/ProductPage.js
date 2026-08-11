@@ -5,6 +5,7 @@ const ProductPage = ({ user }) => {
   const [products, setProducts] = useState([]);
   const [quantity, setQuantity] = useState({});
   const [message, setMessage] = useState('');
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -21,6 +22,10 @@ const ProductPage = ({ user }) => {
   const handleOrder = async (productId) => {
     if (!user) {
       setMessage('Please login to place an order.');
+      return;
+    }
+    if (isAdmin) {
+      setMessage('Admin users cannot place orders.');
       return;
     }
 
@@ -53,10 +58,12 @@ const ProductPage = ({ user }) => {
             <p className="product-price">Tk {product.price.toFixed(2)}</p>
             <p className="product-stock">Stock: {product.stock}</p>
             <div className="product-card-actions">
-              <button className="button button-card" onClick={() => window.open(`/products/${product._id}`, '_self')}>
-                View Details
-              </button>
-              {user?.role !== 'admin' && (
+              {!isAdmin && (
+                <button className="button button-card" onClick={() => window.open(`/products/${product._id}`, '_self')}>
+                  View Details
+                </button>
+              )}
+              {!isAdmin && (
                 <button className="button button-secondary button-card" onClick={() => handleOrder(product._id)} disabled={product.stock < 1}>
                   Quick Order
                 </button>
