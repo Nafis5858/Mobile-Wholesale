@@ -6,7 +6,7 @@ services:
     branch: main
     path: .
     plan: free
-    buildCommand: npm install && npm run build
+    buildCommand: cd frontend && npm install && npm run build
     startCommand: npm start
     envVars:
       - key: MONGODB_URI
