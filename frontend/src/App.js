@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import NavBar from './components/NavBar';
+import Footer from './components/Footer';
 import WhatsAppFloat from './components/WhatsAppFloat';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -70,7 +71,7 @@ function App() {
         <Route path="/contact" element={<ContactPage contactInfo={contactInfo} />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-
+      <Footer />
       <WhatsAppFloat />
     </div>
   );

@@ -13,14 +13,13 @@ const HomePage = ({ user }) => {
           </p>
           <div className="home-hero-actions">
             <Link className="button" to="/products">Browse Products</Link>
-            <Link className="button button-secondary" to="/contact">Contact Sales</Link>
+            <a className="button button-secondary" href="#footer">Contact Us ↓</a>
           </div>
           <div className="home-stats-row">
             <div className="home-stat-item">
               <strong>12,000+</strong>
               <span>SKUs in stock</span>
             </div>
-
             <div className="home-stat-item">
               <strong>15 yrs</strong>
               <span>In business</span>
@@ -52,7 +51,6 @@ const HomePage = ({ user }) => {
           <p>Browse 10,000+ mobile phones by brand, grade, storage and price.</p>
           <Link className="home-card-button" to="/products">View All Products</Link>
         </div>
-
         <div className="home-card">
           <div className="home-card-icon">🖼️</div>
           <h3>Image Gallery</h3>
@@ -61,7 +59,7 @@ const HomePage = ({ user }) => {
         </div>
         <div className="home-card">
           <div className="home-card-icon">📰</div>
-          <h3>Blog & News</h3>
+          <h3>Blog &amp; News</h3>
           <p>Read industry updates, market insights and mobile wholesale trends.</p>
           <Link className="home-card-button" to="/blog">Read Blog</Link>
         </div>
@@ -71,13 +69,6 @@ const HomePage = ({ user }) => {
           <p>See verified reviews from trade partners and wholesale customers.</p>
           <Link className="home-card-button" to="/reviews">Read Reviews</Link>
         </div>
-        <div className="home-card">
-          <div className="home-card-icon">☎️</div>
-          <h3>Contact Us</h3>
-          <p>Reach our sales team by phone, email, or online enquiry form.</p>
-          <Link className="home-card-button" to="/contact">Get In Touch</Link>
-        </div>
-
       </section>
     </div>
   );
