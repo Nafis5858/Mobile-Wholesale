@@ -11,7 +11,7 @@ import HomePage from './pages/HomePage';
 import StockListPage from './pages/StockListPage';
 import GalleryPage from './pages/GalleryPage';
 import BlogPage from './pages/BlogPage';
-import TradePage from './pages/TradePage';
+
 import AdminPage from './pages/AdminPage';
 import AdminContactPage from './pages/AdminContactPage';
 import AdminGalleryPage from './pages/AdminGalleryPage';
@@ -60,10 +60,9 @@ function App() {
         <Route path="/dashboard" element={user ? <DashboardPage user={user} onLogout={handleLogout} onProfileUpdate={(updatedUser) => { localStorage.setItem('mobileWholesaleUser', JSON.stringify(updatedUser)); setUser(updatedUser); }} /> : <Navigate to="/login" />} />
         <Route path="/products" element={<ProductPage user={user} />} />
         <Route path="/products/:id" element={<ProductDetailPage user={user} />} />
-        <Route path="/stock-list" element={<StockListPage />} />
+        <Route path="/stock-list" element={user?.role === 'admin' ? <StockListPage user={user} /> : <Navigate to="/login" />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/blog" element={<BlogPage />} />
-        <Route path="/trade" element={<TradePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/reviews" element={<ReviewsPage />} />
         <Route path="/orders" element={user ? <OrdersPage user={user} /> : <Navigate to="/login" />} />

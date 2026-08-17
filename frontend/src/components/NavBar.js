@@ -14,8 +14,7 @@ const NavBar = ({ user, onLogout }) => {
       <div className="nav-links">
         <NavLink end className={navClass} to="/">Home</NavLink>
         <NavLink className={navClass} to="/products">Products</NavLink>
-        <NavLink end className={navClass} to="/stock-list">Stock List</NavLink>
-        <NavLink end className={navClass} to="/trade">Trade</NavLink>
+        {user?.role === 'admin' && <NavLink end className={navClass} to="/stock-list">Stock List</NavLink>}
         <NavLink end className={navClass} to="/gallery">Gallery</NavLink>
         <NavLink end className={navClass} to="/blog">Blog</NavLink>
         <NavLink end className={navClass} to="/about">About</NavLink>
