@@ -2,9 +2,13 @@ import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Ensure env variables are loaded before evaluating Cloudinary config
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const hasCloudinaryConfig = Boolean(
   process.env.CLOUDINARY_CLOUD_NAME &&
