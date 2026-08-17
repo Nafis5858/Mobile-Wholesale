@@ -147,6 +147,13 @@ const AdminPage = () => {
         >
           🖼️ Manage Gallery
         </Link>
+        <Link
+          to="/admin/orders"
+          className="button"
+          style={{ background: '#2563eb', textDecoration: 'none', padding: '14px 24px', borderRadius: '14px', fontWeight: 700 }}
+        >
+          📦 Manage Orders
+        </Link>
       </section>
 
       {/* ── PRODUCTS SECTION ── */}
