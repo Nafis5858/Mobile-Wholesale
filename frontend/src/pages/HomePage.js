@@ -8,8 +8,8 @@ const HomePage = ({ user }) => {
           <span className="home-eyebrow">Bangladesh's leading mobile wholesale supplier</span>
           <h1>Wholesale mobile phones, tablets and accessories</h1>
           <p>
-            Browse bulk-ready inventory, trusted trade pricing, fast dispatch and dedicated
-            account support for wholesale buyers.
+            Browse bulk-ready inventory, competitive wholesale pricing, fast dispatch and
+            dedicated account support for our buyers.
           </p>
           <div className="home-hero-actions">
             <Link className="button" to="/products">Browse Products</Link>
@@ -20,10 +20,7 @@ const HomePage = ({ user }) => {
               <strong>12,000+</strong>
               <span>SKUs in stock</span>
             </div>
-            <div className="home-stat-item">
-              <strong>600+</strong>
-              <span>Trade partners</span>
-            </div>
+
             <div className="home-stat-item">
               <strong>15 yrs</strong>
               <span>In business</span>
@@ -55,18 +52,7 @@ const HomePage = ({ user }) => {
           <p>Browse 10,000+ mobile phones by brand, grade, storage and price.</p>
           <Link className="home-card-button" to="/products">View All Products</Link>
         </div>
-        <div className="home-card">
-          <div className="home-card-icon">📊</div>
-          <h3>Live Stock List</h3>
-          <p>Updated daily stock list with pricing and availability for every item.</p>
-          <Link className="home-card-button" to="/stock-list">View Stock List</Link>
-        </div>
-        <div className="home-card">
-          <div className="home-card-icon">🧾</div>
-          <h3>Trade Application</h3>
-          <p>Apply for a trade account to access bulk pricing and dedicated support.</p>
-          <Link className="home-card-button" to="/trade">Apply for Trade</Link>
-        </div>
+
         <div className="home-card">
           <div className="home-card-icon">🖼️</div>
           <h3>Image Gallery</h3>

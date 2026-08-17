@@ -8,7 +8,7 @@ import ProductPage from './pages/ProductPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import OrdersPage from './pages/OrdersPage';
 import HomePage from './pages/HomePage';
-import StockListPage from './pages/StockListPage';
+
 import GalleryPage from './pages/GalleryPage';
 import BlogPage from './pages/BlogPage';
 
@@ -60,7 +60,7 @@ function App() {
         <Route path="/dashboard" element={user ? <DashboardPage user={user} onLogout={handleLogout} onProfileUpdate={(updatedUser) => { localStorage.setItem('mobileWholesaleUser', JSON.stringify(updatedUser)); setUser(updatedUser); }} /> : <Navigate to="/login" />} />
         <Route path="/products" element={<ProductPage user={user} />} />
         <Route path="/products/:id" element={<ProductDetailPage user={user} />} />
-        <Route path="/stock-list" element={user?.role === 'admin' ? <StockListPage user={user} /> : <Navigate to="/login" />} />
+
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/about" element={<AboutPage />} />
