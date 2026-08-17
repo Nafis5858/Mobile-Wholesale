@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import api from '../api';
+import api, { getAssetUrl } from '../api';
 
 const ProductDetailPage = ({ user }) => {
   const { id } = useParams();
@@ -43,7 +43,7 @@ const ProductDetailPage = ({ user }) => {
         productId: product._id,
         name: product.name,
         price: product.price,
-        imageUrl: product.imageUrl,
+        imageUrl: getAssetUrl(product.imageUrl),
         quantity: qty,
       });
     }
@@ -86,7 +86,7 @@ const ProductDetailPage = ({ user }) => {
       {product ? (
         <div className="product-detail-card">
           <div className="detail-media">
-            <img src={product.imageUrl || 'https://via.placeholder.com/540x360?text=Mobile'} alt={product.name} />
+            <img src={getAssetUrl(product.imageUrl) || 'https://via.placeholder.com/540x360?text=Mobile'} alt={product.name} />
           </div>
           <div className="detail-info">
             <div className="detail-header">

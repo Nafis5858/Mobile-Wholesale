@@ -1,9 +1,24 @@
 import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import auth from '../middleware/auth.js';
 import SiteSetting from '../models/SiteSetting.js';
 import GalleryImage from '../models/GalleryImage.js';
 
 const router = express.Router();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, path.join(__dirname, '../uploads')),
+    filename: (req, file, cb) => {
+      const safeName = file.originalname.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_.]/g, '');
+      cb(null, `${Date.now()}-${safeName}`);
+    },
+  }),
+});
+const uploadedImagePath = (file) => `/uploads/${file.filename}`;
 
 const requireAdmin = (req, res, next) => {
   if (!req.user || req.user.role !== 'admin') {
@@ -49,13 +64,14 @@ router.get('/gallery', async (req, res) => {
   }
 });
 
-router.post('/gallery', auth, requireAdmin, async (req, res) => {
+router.post('/gallery', auth, requireAdmin, upload.single('imageFile'), async (req, res) => {
   try {
     const { title, imageUrl } = req.body;
-    if (!imageUrl) {
-      return res.status(400).json({ message: 'Image URL is required.' });
+    const finalImageUrl = req.file ? uploadedImagePath(req.file) : imageUrl;
+    if (!finalImageUrl) {
+      return res.status(400).json({ message: 'Gallery image is required.' });
     }
-    const image = await GalleryImage.create({ title, imageUrl });
+    const image = await GalleryImage.create({ title, imageUrl: finalImageUrl });
     res.status(201).json(image);
   } catch (error) {
     res.status(500).json({ message: 'Could not create gallery image.' });

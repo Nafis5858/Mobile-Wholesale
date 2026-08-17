@@ -18,6 +18,7 @@ const upload = multer({
 });
 
 const router = express.Router();
+const uploadedImagePath = (file) => `/uploads/${file.filename}`;
 
 router.get('/', async (req, res) => {
   try {
@@ -51,9 +52,7 @@ router.post('/', auth, requireAdmin, upload.single('imageFile'), async (req, res
     if (!name || !brand || price === undefined || stock === undefined) {
       return res.status(400).json({ message: 'Name, brand, price, and stock are required.' });
     }
-    const finalImageUrl = req.file
-      ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
-      : imageUrl;
+    const finalImageUrl = req.file ? uploadedImagePath(req.file) : imageUrl;
 
     const product = await Product.create({
       name,
@@ -82,7 +81,7 @@ router.put('/:id', auth, requireAdmin, upload.single('imageFile'), async (req, r
     if (price !== undefined) product.price = price;
     if (stock !== undefined) product.stock = stock;
     if (req.file) {
-      product.imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+      product.imageUrl = uploadedImagePath(req.file);
     } else if (imageUrl !== undefined) {
       product.imageUrl = imageUrl;
     }

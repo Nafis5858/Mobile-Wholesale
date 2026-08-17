@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import api from '../api';
+import api, { getAssetUrl } from '../api';
 
 const ProductPage = ({ user }) => {
   const [products, setProducts] = useState([]);
@@ -51,7 +51,7 @@ const ProductPage = ({ user }) => {
       <div className="product-grid">
         {products.map((product) => (
           <div key={product._id} className="product-card">
-            <img src={product.imageUrl || 'https://via.placeholder.com/260x180?text=Mobile'} alt={product.name} />
+            <img src={getAssetUrl(product.imageUrl) || 'https://via.placeholder.com/260x180?text=Mobile'} alt={product.name} />
             <h3>{product.name}</h3>
             <p>{product.brand}</p>
             <p>{product.description}</p>

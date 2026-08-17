@@ -1,20 +1,20 @@
 import { useEffect, useState } from 'react';
-import api from '../api';
+import api, { getAssetUrl } from '../api';
 
 const GalleryPage = () => {
-  const [products, setProducts] = useState([]);
+  const [images, setImages] = useState([]);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    const loadProducts = async () => {
+    const loadImages = async () => {
       try {
-        const response = await api.get('/products');
-        setProducts(response.data);
+        const response = await api.get('/admin/gallery');
+        setImages(response.data);
       } catch (error) {
         setMessage('Could not load gallery images.');
       }
     };
-    loadProducts();
+    loadImages();
   }, []);
 
   return (
@@ -27,16 +27,18 @@ const GalleryPage = () => {
       </header>
       {message && <p className="status-message">{message}</p>}
       <div className="gallery-grid">
-        {products.map((product) => (
-          <div key={product._id} className="gallery-card">
-            <img src={product.imageUrl || 'https://via.placeholder.com/360x260?text=Mobile'} alt={product.name} />
+        {images.map((image) => (
+          <div key={image._id} className="gallery-card">
+            <img src={getAssetUrl(image.imageUrl) || 'https://via.placeholder.com/360x260?text=Gallery'} alt={image.title || 'Gallery'} />
             <div>
-              <h3>{product.name}</h3>
-              <p>{product.brand}</p>
+              <h3>{image.title || 'Mobile Inventory'}</h3>
             </div>
           </div>
         ))}
       </div>
+      {!message && images.length === 0 && (
+        <p className="status-message">No gallery photos have been added yet.</p>
+      )}
     </div>
   );
 };

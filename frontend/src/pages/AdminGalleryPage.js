@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import api from '../api';
+import api, { getAssetUrl } from '../api';
 
 const AdminGalleryPage = () => {
   const [images, setImages] = useState([]);
-  const [form, setForm] = useState({ title: '', imageUrl: '' });
+  const [form, setForm] = useState({ title: '', imageUrl: '', imageFile: null });
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -19,17 +19,29 @@ const AdminGalleryPage = () => {
   }, []);
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, files, type } = event.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'file' ? files[0] : value,
+    }));
   };
 
   const handleCreate = async (event) => {
     event.preventDefault();
     setMessage('');
     try {
-      const response = await api.post('/admin/gallery', form);
+      const formData = new FormData();
+      formData.append('title', form.title);
+      if (form.imageFile) {
+        formData.append('imageFile', form.imageFile);
+      } else if (form.imageUrl) {
+        formData.append('imageUrl', form.imageUrl);
+      }
+
+      const response = await api.post('/admin/gallery', formData);
       setImages((prev) => [response.data, ...prev]);
-      setForm({ title: '', imageUrl: '' });
+      setForm({ title: '', imageUrl: '', imageFile: null });
+      event.target.reset();
       setMessage('Image added to gallery.');
     } catch (error) {
       setMessage(error.response?.data?.message || 'Could not add gallery image.');
@@ -59,14 +71,16 @@ const AdminGalleryPage = () => {
       <form className="auth-card" onSubmit={handleCreate}>
         <label>Title</label>
         <input name="title" value={form.title} onChange={handleChange} />
+        <label>Upload Gallery Photo</label>
+        <input name="imageFile" type="file" accept="image/*" onChange={handleChange} />
         <label>Image URL</label>
-        <input name="imageUrl" value={form.imageUrl} onChange={handleChange} required />
+        <input name="imageUrl" value={form.imageUrl} onChange={handleChange} placeholder="Optional if uploading a file" />
         <button type="submit">Add Image</button>
       </form>
       <div className="product-grid">
         {images.map((image) => (
           <div key={image._id} className="product-card">
-            <img src={image.imageUrl} alt={image.title || 'Gallery'} />
+            <img src={getAssetUrl(image.imageUrl)} alt={image.title || 'Gallery'} />
             <h3>{image.title || 'Gallery Image'}</h3>
             <button className="logout-button" onClick={() => handleDelete(image._id)}>Delete</button>
           </div>
