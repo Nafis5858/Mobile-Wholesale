@@ -137,6 +137,10 @@ router.post('/:orderId/review', auth, async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: 'Order not found.' });
     }
+    
+    if (order.status === 'pending' || order.status === 'rejected') {
+      return res.status(403).json({ message: 'You can only review confirmed orders.' });
+    }
 
     const existing = await Review.findOne({ order: order._id });
     if (existing) {
@@ -168,6 +172,41 @@ router.get('/reviews/all', async (req, res) => {
     res.json(reviews);
   } catch (error) {
     res.status(500).json({ message: 'Could not fetch reviews.' });
+  }
+});
+
+// Admin: Get all orders
+router.get('/all', auth, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin access required.' });
+    const orders = await Order.find()
+      .populate('user', 'name email phone')
+      .populate('product', 'name brand')
+      .sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: 'Could not fetch all orders.' });
+  }
+});
+
+// Admin: Update order status
+router.put('/:id/status', auth, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin access required.' });
+    const { status } = req.body;
+    const validStatuses = ['pending', 'confirmed', 'shipped', 'delivered', 'rejected'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status.' });
+    }
+    
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: 'Order not found.' });
+    
+    order.status = status;
+    await order.save();
+    res.json({ message: `Order status updated to ${status}.`, order });
+  } catch (error) {
+    res.status(500).json({ message: 'Could not update order status.' });
   }
 });
 

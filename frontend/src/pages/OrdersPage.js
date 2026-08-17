@@ -112,7 +112,11 @@ const OrdersPage = () => {
               </div>
               <div>{new Date(order.createdAt).toLocaleDateString()}</div>
               <div>
-                {order.hasReview ? (
+                {order.status === 'pending' || order.status === 'rejected' ? (
+                  <span style={{ color: 'var(--text-3)', fontSize: '0.85rem' }}>
+                    {order.status === 'pending' ? 'Pending Approval' : 'Rejected'}
+                  </span>
+                ) : order.hasReview ? (
                   <span className="review-done-badge">✅ Reviewed</span>
                 ) : (
                   <button

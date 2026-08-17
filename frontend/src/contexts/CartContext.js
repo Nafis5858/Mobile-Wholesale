@@ -4,8 +4,17 @@ export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => {
-    const saved = localStorage.getItem('mobileWholesaleCart');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('mobileWholesaleCart');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Filter out legacy format items that don't have a 'product' object
+        return parsed.filter(item => item && item.product && item.product._id);
+      }
+    } catch (e) {
+      console.error('Failed to parse cart', e);
+    }
+    return [];
   });
 
   useEffect(() => {
