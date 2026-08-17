@@ -72,7 +72,7 @@ router.post('/:orderId/review', auth, async (req, res) => {
       return res.status(400).json({ message: 'Rating must be between 1 and 5.' });
     }
 
-    const order = await Order.findOne({ _id: req.params.orderId, user: req.user._id }).populate('product');
+    const order = await Order.findOne({ _id: req.params.orderId, user: req.user._id || req.user.id });
     if (!order) {
       return res.status(404).json({ message: 'Order not found.' });
     }
@@ -83,9 +83,9 @@ router.post('/:orderId/review', auth, async (req, res) => {
     }
 
     const review = await Review.create({
-      user: req.user._id,
+      user: req.user._id || req.user.id,
       order: order._id,
-      product: order.product._id,
+      product: order.product,
       rating: Number(rating),
       comment,
       buyerName: req.user.name || req.user.email || 'Buyer',
@@ -93,7 +93,8 @@ router.post('/:orderId/review', auth, async (req, res) => {
 
     res.status(201).json(review);
   } catch (error) {
-    res.status(500).json({ message: 'Could not submit review.' });
+    console.error('Review Error:', error);
+    res.status(500).json({ message: 'Could not submit review.', error: error.message });
   }
 });
 
