@@ -770,3 +770,93 @@ body {
     margin-bottom: 10px;
   }
 }
+
+/* -- WhatsApp Floating Button -- */
+.whatsapp-float {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #25d366;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 32px rgba(37, 211, 102, 0.45);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.whatsapp-float:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 14px 40px rgba(37, 211, 102, 0.55);
+}
+@media (max-width: 600px) {
+  .whatsapp-float span { display: none; }
+  .whatsapp-float { padding: 14px; }
+}
+/* -- Star Rating Input -- */
+.star-rating { display: flex; gap: 6px; }
+.star-btn {
+  background: none; border: none; font-size: 1.8rem;
+  color: #d1d5db; cursor: pointer; padding: 0; line-height: 1;
+  transition: color 0.15s, transform 0.15s;
+}
+.star-btn.active, .star-btn:hover { color: #f59e0b; transform: scale(1.15); }
+/* -- Review Form -- */
+.review-form {
+  margin: 0 0 8px; padding: 20px 24px;
+  background: #f0fdf4; border: 1px solid #bbf7d0;
+  border-radius: 16px; display: grid; gap: 12px;
+}
+.review-form-title { margin: 0; font-weight: 700; color: #065f46; }
+.review-textarea {
+  width: 100%; padding: 12px 14px; border: 1px solid #d1fae5;
+  border-radius: 12px; font-size: 0.97rem; font-family: inherit;
+  resize: vertical; box-sizing: border-box;
+}
+/* -- Review Cards -- */
+.review-card {
+  padding: 24px; border-radius: 18px; background: white;
+  border: 1px solid rgba(15,23,42,0.08);
+  box-shadow: 0 8px 24px rgba(15,23,42,0.05); display: grid; gap: 14px;
+}
+.review-card-header { display: flex; align-items: flex-start; gap: 14px; }
+.review-avatar {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: linear-gradient(135deg,#2563eb,#7c3aed);
+  color: white; font-weight: 700; font-size: 1.2rem;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.review-buyer-name { margin: 0; font-weight: 700; color: #0f172a; }
+.review-product-tag { margin: 4px 0 0; font-size: 0.85rem; color: #2563eb; font-weight: 600; }
+.review-card-right { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.star-display { font-size: 1.1rem; letter-spacing: 1px; }
+.review-date { font-size: 0.82rem; color: #94a3b8; }
+.review-comment { margin: 0; color: #334155; line-height: 1.7; font-style: italic; }
+/* -- Reviews Average Badge -- */
+.reviews-avg-badge {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: #fefce8; border: 1px solid #fde68a; border-radius: 16px; padding: 16px 24px;
+}
+.reviews-avg-number { font-size: 2rem; font-weight: 800; color: #92400e; }
+.reviews-avg-count { font-size: 0.82rem; color: #78716c; }
+/* -- Order Status Badge -- */
+.order-status-badge {
+  display: inline-flex; padding: 4px 10px; border-radius: 999px;
+  font-size: 0.78rem; font-weight: 700; text-transform: capitalize;
+}
+.status-pending   { background: #fef3c7; color: #92400e; }
+.status-confirmed { background: #dbeafe; color: #1e40af; }
+.status-shipped   { background: #ede9fe; color: #5b21b6; }
+.status-delivered { background: #dcfce7; color: #166534; }
+/* -- Reviewed Badge -- */
+.review-done-badge {
+  font-size: 0.82rem; font-weight: 700; color: #166534;
+  background: #dcfce7; padding: 4px 10px; border-radius: 999px;
+}
+/* -- Orders row 6 cols -- */
+.orders-table .orders-row { grid-template-columns: 2fr 0.7fr 1fr 1fr 1.2fr 1.2fr; }

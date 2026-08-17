@@ -34,6 +34,7 @@ router.put('/site/contact', auth, requireAdmin, async (req, res) => {
     settings.contact.email = req.body.email || settings.contact.email;
     settings.contact.phone = req.body.phone || settings.contact.phone;
     settings.contact.address = req.body.address || settings.contact.address;
+    if (req.body.whatsapp !== undefined) settings.contact.whatsapp = req.body.whatsapp;
     await settings.save();
     res.json(settings);
   } catch (error) {

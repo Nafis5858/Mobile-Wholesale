@@ -77,12 +77,7 @@ const HomePage = ({ user }) => {
           <p>Reach our sales team by phone, email, or online enquiry form.</p>
           <Link className="home-card-button" to="/contact">Get In Touch</Link>
         </div>
-        <div className="home-card">
-          <div className="home-card-icon">🎥</div>
-          <h3>Company Video</h3>
-          <p>Watch our company overview video to learn more about our trade services.</p>
-          <Link className="home-card-button" to="/about">Watch Video</Link>
-        </div>
+
       </section>
     </div>
   );

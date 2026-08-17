@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../api';
 
 const AdminContactPage = () => {
-  const [contact, setContact] = useState({ email: '', phone: '', address: '' });
+  const [contact, setContact] = useState({ email: '', phone: '', address: '', whatsapp: '' });
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -50,6 +50,8 @@ const AdminContactPage = () => {
         <input name="phone" value={contact.phone} onChange={handleChange} required />
         <label>Address</label>
         <input name="address" value={contact.address} onChange={handleChange} required />
+        <label>WhatsApp Number (with country code, e.g. 8801XXXXXXXXX)</label>
+        <input name="whatsapp" value={contact.whatsapp || ''} onChange={handleChange} placeholder="e.g. 8801712345678" />
         <button type="submit">Save Contact Info</button>
       </form>
     </div>
