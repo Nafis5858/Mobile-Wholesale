@@ -14,6 +14,7 @@ import HomePage from './pages/HomePage';
 import GalleryPage from './pages/GalleryPage';
 import BlogPage from './pages/BlogPage';
 import AdminPage from './pages/AdminPage';
+import StockListPage from './pages/StockListPage';
 import AdminContactPage from './pages/AdminContactPage';
 import AdminGalleryPage from './pages/AdminGalleryPage';
 import ContactPage from './pages/ContactPage';
@@ -70,6 +71,7 @@ function App() {
         <Route path="/reviews" element={<ReviewsPage />} />
         <Route path="/orders" element={user ? <OrdersPage user={user} /> : <Navigate to="/login" />} />
         <Route path="/admin" element={user?.role === 'admin' ? <AdminPage /> : <Navigate to="/login" />} />
+        <Route path="/stock-list" element={user?.role === 'admin' ? <StockListPage /> : <Navigate to="/login" />} />
         <Route path="/admin/contact" element={user?.role === 'admin' ? <AdminContactPage /> : <Navigate to="/login" />} />
         <Route path="/admin/gallery" element={user?.role === 'admin' ? <AdminGalleryPage /> : <Navigate to="/login" />} />
         <Route path="/checkout" element={<CheckoutPage user={user} />} />

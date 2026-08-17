@@ -21,9 +21,11 @@ const NavBar = ({ user, onLogout }) => {
         <NavLink end className={navClass} to="/gallery">Gallery</NavLink>
         <NavLink end className={navClass} to="/blog">Blog</NavLink>
         <NavLink end className={navClass} to="/about">About</NavLink>
-        <NavLink end className={navClass} to="/checkout" style={{ position: 'relative' }}>
-          🛒 Cart {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-        </NavLink>
+        {user?.role !== 'admin' && (
+          <NavLink end className={navClass} to="/checkout" style={{ position: 'relative' }}>
+            🛒 Cart {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+          </NavLink>
+        )}
         {user ? (
           <>
             {user.role === 'admin' ? <NavLink className={navClass} to="/admin">Admin</NavLink> : <NavLink className={navClass} to="/dashboard">Dashboard</NavLink>}
