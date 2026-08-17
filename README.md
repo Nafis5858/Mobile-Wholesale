@@ -108,6 +108,9 @@ Railway makes Node deployment straightforward.
 3. Add environment variables in Railway project settings:
    - `MONGODB_URI`
    - `JWT_SECRET`
+   - `CLOUDINARY_CLOUD_NAME`
+   - `CLOUDINARY_API_KEY`
+   - `CLOUDINARY_API_SECRET`
 4. Set the start command to `npm start` (already in `package.json`).
 5. Deploy and note the backend URL (e.g., `https://your-backend.railway.app`).
 
@@ -125,7 +128,7 @@ Alternative hosts: Render, Heroku (use `Procfile`), DigitalOcean App Platform.
 ### 6) Post-deploy checks
 - Register/login and confirm the frontend reads/writes to the backend.
 - Check MongoDB Atlas to confirm collections and documents exist.
-- If images/uploads are required to persist, consider using S3 or another object store instead of the local `uploads/` folder.
+- Set the Cloudinary environment variables so product and gallery uploads persist across deploys/restarts.
 
 ### 7) Optional: Containerize the backend
 Use the provided `backend/Dockerfile` to build a container and deploy to any container host.

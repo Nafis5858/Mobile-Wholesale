@@ -1,24 +1,10 @@
 import express from 'express';
-import multer from 'multer';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import auth from '../middleware/auth.js';
 import SiteSetting from '../models/SiteSetting.js';
 import GalleryImage from '../models/GalleryImage.js';
+import { deleteUploadedImage, saveUploadedImage, upload } from '../utils/imageUpload.js';
 
 const router = express.Router();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, path.join(__dirname, '../uploads')),
-    filename: (req, file, cb) => {
-      const safeName = file.originalname.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_.]/g, '');
-      cb(null, `${Date.now()}-${safeName}`);
-    },
-  }),
-});
-const uploadedImagePath = (file) => `/uploads/${file.filename}`;
 
 const requireAdmin = (req, res, next) => {
   if (!req.user || req.user.role !== 'admin') {
@@ -67,11 +53,16 @@ router.get('/gallery', async (req, res) => {
 router.post('/gallery', auth, requireAdmin, upload.single('imageFile'), async (req, res) => {
   try {
     const { title, imageUrl } = req.body;
-    const finalImageUrl = req.file ? uploadedImagePath(req.file) : imageUrl;
+    const uploadedImage = await saveUploadedImage(req.file, 'mobile-wholesale/gallery');
+    const finalImageUrl = uploadedImage?.imageUrl || imageUrl;
     if (!finalImageUrl) {
       return res.status(400).json({ message: 'Gallery image is required.' });
     }
-    const image = await GalleryImage.create({ title, imageUrl: finalImageUrl });
+    const image = await GalleryImage.create({
+      title,
+      imageUrl: finalImageUrl,
+      imagePublicId: uploadedImage?.imagePublicId || '',
+    });
     res.status(201).json(image);
   } catch (error) {
     res.status(500).json({ message: 'Could not create gallery image.' });
@@ -84,6 +75,7 @@ router.delete('/gallery/:id', auth, requireAdmin, async (req, res) => {
     if (!image) {
       return res.status(404).json({ message: 'Gallery image not found.' });
     }
+    await deleteUploadedImage(image.imagePublicId);
     await image.deleteOne();
     res.json({ message: 'Gallery image deleted.' });
   } catch (error) {

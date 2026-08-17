@@ -1,24 +1,9 @@
 import express from 'express';
-import multer from 'multer';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import Product from '../models/Product.js';
 import auth from '../middleware/auth.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, path.join(__dirname, '../uploads')),
-    filename: (req, file, cb) => {
-      const safeName = file.originalname.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_.]/g, '');
-      cb(null, `${Date.now()}-${safeName}`);
-    },
-  }),
-});
+import { deleteUploadedImage, saveUploadedImage, upload } from '../utils/imageUpload.js';
 
 const router = express.Router();
-const uploadedImagePath = (file) => `/uploads/${file.filename}`;
 
 router.get('/', async (req, res) => {
   try {
@@ -52,7 +37,7 @@ router.post('/', auth, requireAdmin, upload.single('imageFile'), async (req, res
     if (!name || !brand || price === undefined || stock === undefined) {
       return res.status(400).json({ message: 'Name, brand, price, and stock are required.' });
     }
-    const finalImageUrl = req.file ? uploadedImagePath(req.file) : imageUrl;
+    const uploadedImage = await saveUploadedImage(req.file, 'mobile-wholesale/products');
 
     const product = await Product.create({
       name,
@@ -60,7 +45,8 @@ router.post('/', auth, requireAdmin, upload.single('imageFile'), async (req, res
       description,
       price,
       stock,
-      imageUrl: finalImageUrl,
+      imageUrl: uploadedImage?.imageUrl || imageUrl || '',
+      imagePublicId: uploadedImage?.imagePublicId || '',
     });
     res.status(201).json(product);
   } catch (error) {
@@ -81,9 +67,13 @@ router.put('/:id', auth, requireAdmin, upload.single('imageFile'), async (req, r
     if (price !== undefined) product.price = price;
     if (stock !== undefined) product.stock = stock;
     if (req.file) {
-      product.imageUrl = uploadedImagePath(req.file);
+      const uploadedImage = await saveUploadedImage(req.file, 'mobile-wholesale/products');
+      await deleteUploadedImage(product.imagePublicId);
+      product.imageUrl = uploadedImage.imageUrl;
+      product.imagePublicId = uploadedImage.imagePublicId;
     } else if (imageUrl !== undefined) {
       product.imageUrl = imageUrl;
+      product.imagePublicId = '';
     }
     await product.save();
     res.json(product);
@@ -98,6 +88,7 @@ router.delete('/:id', auth, requireAdmin, async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: 'Product not found.' });
     }
+    await deleteUploadedImage(product.imagePublicId);
     await product.deleteOne();
     res.json({ message: 'Product deleted.' });
   } catch (error) {
