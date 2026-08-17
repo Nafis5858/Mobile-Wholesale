@@ -18,6 +18,7 @@ import AdminGalleryPage from './pages/AdminGalleryPage';
 import ContactPage from './pages/ContactPage';
 import AboutPage from './pages/AboutPage';
 import ReviewsPage from './pages/ReviewsPage';
+import CheckoutPage from './pages/CheckoutPage';
 import api from './api';
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
         <Route path="/admin" element={user?.role === 'admin' ? <AdminPage /> : <Navigate to="/login" />} />
         <Route path="/admin/contact" element={user?.role === 'admin' ? <AdminContactPage /> : <Navigate to="/login" />} />
         <Route path="/admin/gallery" element={user?.role === 'admin' ? <AdminGalleryPage /> : <Navigate to="/login" />} />
+        <Route path="/checkout" element={<CheckoutPage user={user} />} />
         <Route path="/contact" element={<ContactPage contactInfo={contactInfo} />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

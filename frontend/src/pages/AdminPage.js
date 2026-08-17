@@ -6,7 +6,7 @@ const AdminPage = () => {
   // ── Products ─────────────────────────────────────────────
   const [products, setProducts] = useState([]);
   const [productMsg, setProductMsg] = useState('');
-  const [form, setForm] = useState({ name: '', brand: '', description: '', price: '', stock: '', imageFile: null });
+  const [form, setForm] = useState({ name: '', brand: '', description: '', price: '', stock: '', minQuantity: 1, imageFile: null });
 
   // ── Gallery ──────────────────────────────────────────────
   const [galleryImages, setGalleryImages] = useState([]);
@@ -54,11 +54,12 @@ const AdminPage = () => {
       formData.append('description', form.description);
       formData.append('price', Number(form.price));
       formData.append('stock', Number(form.stock));
+      formData.append('minQuantity', Number(form.minQuantity || 1));
       if (form.imageFile) formData.append('imageFile', form.imageFile);
 
       const response = await api.post('/products', formData);
       setProducts((prev) => [response.data, ...prev]);
-      setForm({ name: '', brand: '', description: '', price: '', stock: '', imageFile: null });
+      setForm({ name: '', brand: '', description: '', price: '', stock: '', minQuantity: 1, imageFile: null });
       event.target.reset();
       setProductMsg('✅ Product created successfully.');
     } catch (error) {
@@ -163,6 +164,8 @@ const AdminPage = () => {
           <input name="price" type="number" value={form.price} onChange={handleProductChange} required />
           <label>Stock</label>
           <input name="stock" type="number" value={form.stock} onChange={handleProductChange} required />
+          <label>Min Order Quantity (MOQ)</label>
+          <input name="minQuantity" type="number" value={form.minQuantity} onChange={handleProductChange} min="1" required />
           <label>Product Image</label>
           <input name="imageFile" type="file" accept="image/*" onChange={handleProductChange} />
           <button type="submit">Create Product</button>
@@ -182,6 +185,7 @@ const AdminPage = () => {
               <p>{product.brand}</p>
               <p>{product.description}</p>
               <p className="product-price">Tk {product.price.toFixed(2)}</p>
+              <p className="product-stock">Stock: {product.stock} | MOQ: {product.minQuantity || 1}</p>
               <button onClick={() => handleDeleteProduct(product._id)} className="logout-button">
                 Delete
               </button>

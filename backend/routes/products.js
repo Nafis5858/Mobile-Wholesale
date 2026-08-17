@@ -33,7 +33,7 @@ const requireAdmin = (req, res, next) => {
 
 router.post('/', auth, requireAdmin, upload.single('imageFile'), async (req, res) => {
   try {
-    const { name, brand, description, price, stock, imageUrl } = req.body;
+    const { name, brand, description, price, stock, minQuantity, imageUrl } = req.body;
     if (!name || !brand || price === undefined || stock === undefined) {
       return res.status(400).json({ message: 'Name, brand, price, and stock are required.' });
     }
@@ -45,6 +45,7 @@ router.post('/', auth, requireAdmin, upload.single('imageFile'), async (req, res
       description,
       price,
       stock,
+      minQuantity: minQuantity || 1,
       imageUrl: uploadedImage?.imageUrl || imageUrl || '',
       imagePublicId: uploadedImage?.imagePublicId || '',
     });
@@ -56,7 +57,7 @@ router.post('/', auth, requireAdmin, upload.single('imageFile'), async (req, res
 
 router.put('/:id', auth, requireAdmin, upload.single('imageFile'), async (req, res) => {
   try {
-    const { name, brand, description, price, stock, imageUrl } = req.body;
+    const { name, brand, description, price, stock, minQuantity, imageUrl } = req.body;
     const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).json({ message: 'Product not found.' });
@@ -66,6 +67,8 @@ router.put('/:id', auth, requireAdmin, upload.single('imageFile'), async (req, r
     if (description !== undefined) product.description = description;
     if (price !== undefined) product.price = price;
     if (stock !== undefined) product.stock = stock;
+    if (minQuantity !== undefined) product.minQuantity = minQuantity;
+    
     if (req.file) {
       const uploadedImage = await saveUploadedImage(req.file, 'mobile-wholesale/products');
       await deleteUploadedImage(product.imagePublicId);

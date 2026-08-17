@@ -21,13 +21,16 @@ router.post('/', auth, async (req, res) => {
     if (product.stock < quantity) {
       return res.status(400).json({ message: 'Not enough stock available.' });
     }
+    if (quantity < (product.minQuantity || 1)) {
+      return res.status(400).json({ message: `Minimum order quantity is ${product.minQuantity || 1}.` });
+    }
 
     product.stock -= quantity;
     await product.save();
 
     const totalPrice = product.price * quantity;
     const order = await Order.create({
-      user: req.user._id,
+      user: req.user._id || req.user.id,
       product: product._id,
       quantity,
       totalPrice,
@@ -36,6 +39,64 @@ router.post('/', auth, async (req, res) => {
     res.status(201).json(order);
   } catch (error) {
     res.status(500).json({ message: 'Could not place order.' });
+  }
+});
+
+// Checkout multiple items from cart
+router.post('/checkout', auth, async (req, res) => {
+  try {
+    const { items, phone, address } = req.body;
+    
+    if (!items || !items.length) {
+      return res.status(400).json({ message: 'Cart is empty.' });
+    }
+
+    // Validate stock and MOQ for all items first
+    const validatedItems = [];
+    for (const item of items) {
+      const product = await Product.findById(item.productId);
+      if (!product) return res.status(404).json({ message: 'Product not found.' });
+      
+      if (product.stock < item.quantity) {
+        return res.status(400).json({ message: `Not enough stock for ${product.name}.` });
+      }
+      if (item.quantity < (product.minQuantity || 1)) {
+        return res.status(400).json({ message: `Minimum order quantity for ${product.name} is ${product.minQuantity || 1}.` });
+      }
+      validatedItems.push({ product, quantity: item.quantity });
+    }
+
+    // Process stock deductions and create orders
+    const createdOrders = [];
+    for (const item of validatedItems) {
+      item.product.stock -= item.quantity;
+      await item.product.save();
+
+      const order = await Order.create({
+        user: req.user._id || req.user.id,
+        product: item.product._id,
+        quantity: item.quantity,
+        totalPrice: item.product.price * item.quantity,
+      });
+      createdOrders.push(order);
+    }
+
+    // Update user profile if phone/address provided
+    if (phone || address) {
+      import('../models/User.js').then(async ({ default: User }) => {
+         const user = await User.findById(req.user._id || req.user.id);
+         if (user && user.role !== 'admin') {
+            if (phone) user.phone = phone;
+            if (address) user.address = address;
+            await user.save();
+         }
+      }).catch(e => console.error(e));
+    }
+
+    res.status(201).json({ message: 'Checkout successful', orders: createdOrders });
+  } catch (error) {
+    console.error('Checkout error:', error);
+    res.status(500).json({ message: 'Could not process checkout.', error: error.message });
   }
 });
 

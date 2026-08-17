@@ -1137,3 +1137,54 @@ body {
     justify-content: center;
   }
 }
+
+/* ── Cart & Checkout ────────────────────────────────────────── */
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -12px;
+  background: var(--danger);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 99px;
+  box-shadow: 0 0 10px rgba(239,68,68,0.5);
+}
+
+.checkout-summary-section form label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.checkout-summary-section form input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  font-size: 0.95rem;
+  font-family: var(--font);
+  background: var(--bg-3);
+  color: var(--text-1);
+  outline: none;
+  transition: border-color var(--t), box-shadow var(--t);
+  box-sizing: border-box;
+}
+
+.checkout-summary-section form input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+}
+
+@media (max-width: 900px) {
+  .product-detail-card.checkout {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api, { getAssetUrl } from '../api';
+import { CartContext } from '../contexts/CartContext';
 
 const ProductDetailPage = ({ user }) => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useContext(CartContext);
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState('');
@@ -15,6 +17,7 @@ const ProductDetailPage = ({ user }) => {
       try {
         const response = await api.get(`/products/${id}`);
         setProduct(response.data);
+        setQuantity(response.data.minQuantity || 1);
       } catch (error) {
         setMessage('Could not load product details.');
       }
@@ -23,53 +26,29 @@ const ProductDetailPage = ({ user }) => {
   }, [id]);
 
   const handleAddToCart = () => {
-    if (!user) {
-      setMessage('Please login first to add products to cart.');
-      return;
-    }
     if (isAdmin) {
       setMessage('Admin users cannot add products to the cart.');
       return;
     }
     if (!product) return;
 
-    const qty = Math.max(1, Math.min(product.stock, Number(quantity)));
-    const cart = JSON.parse(localStorage.getItem('mobileWholesaleCart') || '[]');
-    const existing = cart.find((item) => item.productId === product._id);
-    if (existing) {
-      existing.quantity = Math.min(product.stock, existing.quantity + qty);
-    } else {
-      cart.push({
-        productId: product._id,
-        name: product.name,
-        price: product.price,
-        imageUrl: getAssetUrl(product.imageUrl),
-        quantity: qty,
-      });
-    }
-    localStorage.setItem('mobileWholesaleCart', JSON.stringify(cart));
-    setMessage('Product added to cart.');
+    const moq = product.minQuantity || 1;
+    const qty = Math.max(moq, Math.min(product.stock, Number(quantity)));
+    addToCart(product, qty);
+    setMessage('Product added to cart!');
   };
 
-  const handleBuyNow = async () => {
-    if (!user) {
-      setMessage('Please login first to buy now.');
-      return;
-    }
+  const handleBuyNow = () => {
     if (isAdmin) {
       setMessage('Admin users cannot purchase products.');
       return;
     }
     if (!product) return;
 
-    const qty = Math.max(1, Math.min(product.stock, Number(quantity)));
-    try {
-      await api.post('/orders', { productId: product._id, quantity: qty });
-      setMessage('Order placed successfully. Redirecting to orders...');
-      setTimeout(() => navigate('/orders'), 1000);
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'Could not complete purchase.');
-    }
+    const moq = product.minQuantity || 1;
+    const qty = Math.max(moq, Math.min(product.stock, Number(quantity)));
+    addToCart(product, qty);
+    navigate('/checkout');
   };
 
   return (
@@ -96,7 +75,7 @@ const ProductDetailPage = ({ user }) => {
             <p className="detail-description">{product.description || 'No description provided yet.'}</p>
             <div className="detail-pricing">
               <span className="product-price">Tk {product.price.toFixed(2)}</span>
-              <span className="product-stock">Stock: {product.stock}</span>
+              <span className="product-stock">Stock: {product.stock} | MOQ: {product.minQuantity || 1}</span>
             </div>
             {user?.role !== 'admin' ? (
               <>
@@ -105,24 +84,19 @@ const ProductDetailPage = ({ user }) => {
                     <label>Quantity</label>
                     <input
                       type="number"
-                      min="1"
+                      min={product.minQuantity || 1}
                       max={product.stock}
                       value={quantity}
                       onChange={(e) => setQuantity(e.target.value)}
                     />
                   </div>
-                  <button className="button" onClick={handleAddToCart} disabled={product.stock < 1}>
+                  <button className="button" onClick={handleAddToCart} disabled={product.stock < (product.minQuantity || 1)}>
                     Add to Cart
                   </button>
-                  <button className="button button-secondary" onClick={handleBuyNow} disabled={product.stock < 1}>
+                  <button className="button button-secondary" onClick={handleBuyNow} disabled={product.stock < (product.minQuantity || 1)}>
                     Buy Now
                   </button>
                 </div>
-                {!user && (
-                  <div className="detail-login-note">
-                    <p>Please <Link to="/login">login</Link> first to order or add to cart.</p>
-                  </div>
-                )}
               </>
             ) : (
               <p className="status-message">Admin users cannot order or view product purchase details.</p>
