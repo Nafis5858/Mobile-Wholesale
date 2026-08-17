@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import api, { getAssetUrl } from '../api';
 
 const AdminPage = () => {
@@ -127,6 +128,25 @@ const AdminPage = () => {
           <p>Manage products, gallery images, and static site content.</p>
         </div>
       </header>
+
+
+      {/* ── QUICK LINKS ── */}
+      <section style={{ width: '100%', maxWidth: '1200px', display: 'flex', gap: '14px', flexWrap: 'wrap', marginBottom: '8px' }}>
+        <Link
+          to="/admin/contact"
+          className="button"
+          style={{ background: '#0f172a', textDecoration: 'none', padding: '14px 24px', borderRadius: '14px', fontWeight: 700 }}
+        >
+          ✏️ Edit Contact Info &amp; WhatsApp
+        </Link>
+        <Link
+          to="/admin/gallery"
+          className="button"
+          style={{ background: '#7c3aed', textDecoration: 'none', padding: '14px 24px', borderRadius: '14px', fontWeight: 700 }}
+        >
+          🖼️ Manage Gallery
+        </Link>
+      </section>
 
       {/* ── PRODUCTS SECTION ── */}
       <section className="hero-card">
