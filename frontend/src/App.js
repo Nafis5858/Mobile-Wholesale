@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { CartContext } from './contexts/CartContext';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import WhatsAppFloat from './components/WhatsAppFloat';
@@ -22,6 +23,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import api from './api';
 
 function App() {
+  const { clearCart } = useContext(CartContext);
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('mobileWholesaleUser');
     return saved ? JSON.parse(saved) : null;
@@ -48,6 +50,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('mobileWholesaleToken');
     localStorage.removeItem('mobileWholesaleUser');
+    clearCart();
     setUser(null);
   };
 
