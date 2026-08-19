@@ -44,32 +44,6 @@ const HomePage = ({ user }) => {
         </div>
       </section>
 
-      <section className="home-cards-grid">
-        <div className="home-card">
-          <div className="home-card-icon">📱</div>
-          <h3>Product Display</h3>
-          <p>Browse 10,000+ mobile phones by brand, grade, storage and price.</p>
-          <Link className="home-card-button" to="/products">View All Products</Link>
-        </div>
-        <div className="home-card">
-          <div className="home-card-icon">🖼️</div>
-          <h3>Image Gallery</h3>
-          <p>See product photos, warehouse views and detailed mobile condition images.</p>
-          <Link className="home-card-button" to="/gallery">View Gallery</Link>
-        </div>
-        <div className="home-card">
-          <div className="home-card-icon">📰</div>
-          <h3>Blog &amp; News</h3>
-          <p>Read industry updates, market insights and mobile wholesale trends.</p>
-          <Link className="home-card-button" to="/blog">Read Blog</Link>
-        </div>
-        <div className="home-card">
-          <div className="home-card-icon">⭐</div>
-          <h3>Reviews</h3>
-          <p>See verified reviews from trade partners and wholesale customers.</p>
-          <Link className="home-card-button" to="/reviews">Read Reviews</Link>
-        </div>
-      </section>
     </div>
   );
 };

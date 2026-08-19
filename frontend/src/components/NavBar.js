@@ -21,6 +21,7 @@ const NavBar = ({ user, onLogout }) => {
         {user?.role === 'admin' && <NavLink end className={navClass} to="/admin/orders">Manage Orders</NavLink>}
         <NavLink end className={navClass} to="/gallery">Gallery</NavLink>
         <NavLink end className={navClass} to="/blog">Blog</NavLink>
+        <NavLink end className={navClass} to="/reviews">Reviews</NavLink>
         <NavLink end className={navClass} to="/about">About</NavLink>
         {user && user.role !== 'admin' && (
           <NavLink end className={navClass} to="/checkout" style={{ position: 'relative' }}>

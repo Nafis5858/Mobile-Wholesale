@@ -16,8 +16,6 @@ import BlogPage from './pages/BlogPage';
 import AdminPage from './pages/AdminPage';
 import StockListPage from './pages/StockListPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
-import AdminContactPage from './pages/AdminContactPage';
-import AdminGalleryPage from './pages/AdminGalleryPage';
 import ContactPage from './pages/ContactPage';
 import AboutPage from './pages/AboutPage';
 import ReviewsPage from './pages/ReviewsPage';
@@ -66,16 +64,14 @@ function App() {
         <Route path="/dashboard" element={user ? <DashboardPage user={user} onLogout={handleLogout} onProfileUpdate={(updatedUser) => { localStorage.setItem('mobileWholesaleUser', JSON.stringify(updatedUser)); setUser(updatedUser); }} /> : <Navigate to="/login" />} />
         <Route path="/products" element={<ProductPage user={user} />} />
         <Route path="/products/:id" element={<ProductDetailPage user={user} />} />
-        <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/gallery" element={<GalleryPage user={user} />} />
+        <Route path="/blog" element={<BlogPage user={user} />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/reviews" element={<ReviewsPage />} />
         <Route path="/orders" element={user ? <OrdersPage user={user} /> : <Navigate to="/login" />} />
         <Route path="/admin" element={user?.role === 'admin' ? <AdminPage /> : <Navigate to="/login" />} />
         <Route path="/admin/orders" element={user?.role === 'admin' ? <AdminOrdersPage /> : <Navigate to="/login" />} />
         <Route path="/stock-list" element={user?.role === 'admin' ? <StockListPage /> : <Navigate to="/login" />} />
-        <Route path="/admin/contact" element={user?.role === 'admin' ? <AdminContactPage /> : <Navigate to="/login" />} />
-        <Route path="/admin/gallery" element={user?.role === 'admin' ? <AdminGalleryPage /> : <Navigate to="/login" />} />
         <Route path="/checkout" element={<CheckoutPage user={user} />} />
         <Route path="/contact" element={<ContactPage contactInfo={contactInfo} />} />
         <Route path="*" element={<Navigate to="/" />} />
