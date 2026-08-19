@@ -54,9 +54,8 @@ const HomePage = ({ user }) => {
           muted 
           playsInline
         >
-          {/* TO DO: Replace this src with your actual video file. 
-              Upload your video to the 'frontend/public' folder and use src="/your-video.mp4" */}
-          <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+          {/* Looping background video */}
+          <source src="/3773898.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </section>
