@@ -44,6 +44,23 @@ const HomePage = ({ user }) => {
         </div>
       </section>
 
+      <section className="home-video-section" style={{ marginTop: '3rem', textAlign: 'center' }}>
+        <h2 style={{ marginBottom: '1.5rem', fontSize: '2rem' }}>See Us in Action</h2>
+        <video 
+          width="100%" 
+          style={{ maxWidth: '900px', borderRadius: '16px', boxShadow: '0 10px 20px rgba(0,0,0,0.5)' }}
+          autoPlay 
+          loop 
+          muted 
+          playsInline
+        >
+          {/* TO DO: Replace this src with your actual video file. 
+              Upload your video to the 'frontend/public' folder and use src="/your-video.mp4" */}
+          <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </section>
+
     </div>
   );
 };
