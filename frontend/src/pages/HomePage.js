@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom';
 
 const HomePage = ({ user }) => {
   return (
-    <div className="page-container home-page">
-      <section className="home-hero">
+    <>
+      <div className="page-container home-page" style={{ paddingBottom: '40px', minHeight: 'auto' }}>
+        <section className="home-hero">
         <div className="home-hero-copy">
           <span className="home-eyebrow">Bangladesh's leading mobile wholesale supplier</span>
           <h1>Wholesale mobile phones, tablets and accessories</h1>
@@ -44,11 +45,11 @@ const HomePage = ({ user }) => {
         </div>
       </section>
 
-      <section className="home-video-section" style={{ marginTop: '3rem', textAlign: 'center' }}>
-        <h2 style={{ marginBottom: '1.5rem', fontSize: '2rem' }}>See Us in Action</h2>
+      </div>
+
+      <section className="home-video-section" style={{ width: '100%', backgroundColor: '#0f1117' }}>
         <video 
-          width="100%" 
-          style={{ maxWidth: '900px', borderRadius: '16px', boxShadow: '0 10px 20px rgba(0,0,0,0.5)' }}
+          style={{ width: '100%', height: 'calc(100vh - 70px)', objectFit: 'cover', display: 'block' }}
           autoPlay 
           loop 
           muted 
@@ -59,8 +60,7 @@ const HomePage = ({ user }) => {
           Your browser does not support the video tag.
         </video>
       </section>
-
-    </div>
+    </>
   );
 };
 
