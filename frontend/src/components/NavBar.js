@@ -22,7 +22,7 @@ const NavBar = ({ user, onLogout }) => {
         <NavLink end className={navClass} to="/gallery">Gallery</NavLink>
         <NavLink end className={navClass} to="/blog">Blog</NavLink>
         <NavLink end className={navClass} to="/about">About</NavLink>
-        {user?.role !== 'admin' && (
+        {user && user.role !== 'admin' && (
           <NavLink end className={navClass} to="/checkout" style={{ position: 'relative' }}>
             🛒 Cart {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </NavLink>
