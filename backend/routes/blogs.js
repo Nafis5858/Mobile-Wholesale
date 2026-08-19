@@ -1,8 +1,15 @@
 import express from 'express';
-import { adminAuth } from '../middleware/auth.js';
+import auth from '../middleware/auth.js';
 import Blog from '../models/Blog.js';
 
 const router = express.Router();
+
+const requireAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Admin access is required.' });
+  }
+  next();
+};
 
 // GET all blogs
 router.get('/', async (req, res) => {
@@ -15,7 +22,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST a new blog (admin only)
-router.post('/', adminAuth, async (req, res) => {
+router.post('/', auth, requireAdmin, async (req, res) => {
   try {
     const { title, summary } = req.body;
     if (!title || !summary) {
@@ -30,7 +37,7 @@ router.post('/', adminAuth, async (req, res) => {
 });
 
 // DELETE a blog (admin only)
-router.delete('/:id', adminAuth, async (req, res) => {
+router.delete('/:id', auth, requireAdmin, async (req, res) => {
   try {
     const blog = await Blog.findByIdAndDelete(req.params.id);
     if (!blog) {
