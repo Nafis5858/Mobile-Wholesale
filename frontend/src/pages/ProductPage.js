@@ -3,7 +3,6 @@ import api, { getAssetUrl, handleImageError } from '../api';
 
 const ProductPage = ({ user }) => {
   const [products, setProducts] = useState([]);
-  const [quantity, setQuantity] = useState({});
   const [message, setMessage] = useState('');
   const [productMsg, setProductMsg] = useState('');
   const [form, setForm] = useState({ name: '', brand: '', description: '', price: '', stock: '', minQuantity: 1, imageFile: null });
@@ -26,26 +25,6 @@ const ProductPage = ({ user }) => {
     };
     loadProducts();
   }, []);
-
-  const handleOrder = async (productId) => {
-    if (!user) {
-      setMessage('Please login to place an order.');
-      return;
-    }
-    if (isAdmin) {
-      setMessage('Admin users cannot place orders.');
-      return;
-    }
-
-    const qty = parseInt(quantity[productId] || '1', 10);
-    setMessage('');
-    try {
-      await api.post('/orders', { productId, quantity: qty });
-      setMessage('Order placed successfully.');
-    } catch (error) {
-      setMessage(error.response?.data?.message || 'Could not place order.');
-    }
-  };
 
   const handleProductChange = (event) => {
     const { name, value, files, type } = event.target;
@@ -183,18 +162,12 @@ const ProductPage = ({ user }) => {
             />
             <h3>{product.name}</h3>
             <p>{product.brand}</p>
-            <p>{product.description}</p>
             <p className="product-price">Tk {product.price.toFixed(2)}</p>
             <p className="product-stock">Stock: {product.stock}</p>
             <div className="product-card-actions" style={isAdmin ? { display: 'flex', gap: '8px' } : undefined}>
               {!isAdmin && (
-                <button className="button button-card" onClick={() => window.open(`/products/${product._id}`, '_self')}>
+                <button className="button" style={{ width: '100%' }} onClick={() => window.open(`/products/${product._id}`, '_self')}>
                   View Details
-                </button>
-              )}
-              {!isAdmin && (
-                <button className="button button-secondary button-card" onClick={() => handleOrder(product._id)} disabled={product.stock < 1}>
-                  Quick Order
                 </button>
               )}
               {isAdmin && (
