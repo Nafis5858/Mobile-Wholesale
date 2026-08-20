@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import api, { getAssetUrl } from '../api';
+import api, { getAssetUrl, handleImageError } from '../api';
 
 const GalleryPage = ({ user }) => {
   const [images, setImages] = useState([]);
@@ -108,7 +108,12 @@ const GalleryPage = ({ user }) => {
       <div className="gallery-grid">
         {images.map((image) => (
           <div key={image._id} className="gallery-card">
-            <img src={getAssetUrl(image.imageUrl) || 'https://via.placeholder.com/360x260?text=Gallery'} alt={image.title || 'Gallery'} />
+            <img
+              src={getAssetUrl(image.imageUrl)}
+              alt={image.title || 'Gallery'}
+              onError={handleImageError}
+              loading="lazy"
+            />
             <div>
               <h3>{image.title || 'Mobile Inventory'}</h3>
               {isAdmin && (

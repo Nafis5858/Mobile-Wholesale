@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import api, { getAssetUrl } from '../api';
+import api, { getAssetUrl, handleImageError } from '../api';
 import { CartContext } from '../contexts/CartContext';
 
 const ProductDetailPage = ({ user }) => {
@@ -65,7 +65,11 @@ const ProductDetailPage = ({ user }) => {
       {product ? (
         <div className="product-detail-card">
           <div className="detail-media">
-            <img src={getAssetUrl(product.imageUrl) || 'https://via.placeholder.com/540x360?text=Mobile'} alt={product.name} />
+            <img
+              src={getAssetUrl(product.imageUrl)}
+              alt={product.name}
+              onError={handleImageError}
+            />
           </div>
           <div className="detail-info">
             <div className="detail-header">

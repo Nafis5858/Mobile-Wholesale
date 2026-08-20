@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
@@ -9,6 +10,11 @@ const __dirname = path.dirname(__filename);
 
 // Ensure env variables are loaded before evaluating Cloudinary config
 dotenv.config({ path: path.join(__dirname, '../.env') });
+
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 const hasCloudinaryConfig = Boolean(
   process.env.CLOUDINARY_CLOUD_NAME &&
@@ -25,7 +31,7 @@ if (hasCloudinaryConfig) {
 }
 
 const localStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, '../uploads')),
+  destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => {
     const safeName = file.originalname.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_.]/g, '');
     cb(null, `${Date.now()}-${safeName}`);
@@ -41,23 +47,40 @@ export const saveUploadedImage = async (file, folder) => {
     return null;
   }
 
-  if (!hasCloudinaryConfig) {
+  // If local disk storage was used (hasCloudinaryConfig is false)
+  if (!hasCloudinaryConfig || !file.buffer) {
     return {
       imageUrl: `/uploads/${file.filename}`,
       imagePublicId: '',
     };
   }
 
-  const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
-  const result = await cloudinary.uploader.upload(dataUri, {
-    folder,
-    resource_type: 'image',
-  });
+  // Try uploading to Cloudinary
+  try {
+    const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder,
+      resource_type: 'image',
+    });
 
-  return {
-    imageUrl: result.secure_url,
-    imagePublicId: result.public_id,
-  };
+    return {
+      imageUrl: result.secure_url,
+      imagePublicId: result.public_id,
+    };
+  } catch (error) {
+    console.warn('Cloudinary upload failed, falling back to local file storage:', error.message);
+    
+    // Fallback: write memory buffer to local uploads folder
+    const safeName = (file.originalname || 'upload.jpg').replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_.]/g, '');
+    const filename = `${Date.now()}-${safeName}`;
+    const filePath = path.join(uploadsDir, filename);
+    await fs.promises.writeFile(filePath, file.buffer);
+
+    return {
+      imageUrl: `/uploads/${filename}`,
+      imagePublicId: '',
+    };
+  }
 };
 
 export const deleteUploadedImage = async (publicId) => {
@@ -65,5 +88,10 @@ export const deleteUploadedImage = async (publicId) => {
     return;
   }
 
-  await cloudinary.uploader.destroy(publicId);
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.warn('Cloudinary delete error:', error.message);
+  }
 };
+

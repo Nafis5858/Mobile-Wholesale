@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
@@ -14,10 +15,15 @@ dotenv.config();
 await connectDB();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(uploadsDir));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);

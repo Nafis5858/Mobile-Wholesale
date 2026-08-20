@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { CartContext } from '../contexts/CartContext';
-import api, { getAssetUrl } from '../api';
+import api, { getAssetUrl, handleImageError } from '../api';
 
 const CheckoutPage = ({ user }) => {
   const { cartItems, updateQuantity, removeFromCart, clearCart, cartCount } = useContext(CartContext);
@@ -108,9 +108,10 @@ const CheckoutPage = ({ user }) => {
               {cartItems.map((item) => (
                 <div key={item.product?._id || Math.random()} className="orders-row" style={{ gridTemplateColumns: '80px 2fr 1fr auto auto', gap: '16px', background: 'var(--surface-2)' }}>
                   <img 
-                    src={getAssetUrl(item.product?.imageUrl) || 'https://via.placeholder.com/80?text=Mobile'} 
-                    alt={item.product?.name || 'Unknown Product'} 
-                    style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }} 
+                    src={getAssetUrl(item.product?.imageUrl)} 
+                    alt={item.product?.name || 'Product'} 
+                    onError={handleImageError}
+                    style={{ width: '100%', height: '70px', borderRadius: '8px', objectFit: 'cover' }} 
                   />
                   <div>
                     <h4 style={{ margin: '0 0 6px 0' }}>{item.product?.name || 'Unknown'}</h4>
