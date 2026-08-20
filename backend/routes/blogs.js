@@ -36,6 +36,24 @@ router.post('/', auth, requireAdmin, async (req, res) => {
   }
 });
 
+// PUT update a blog (admin only)
+router.put('/:id', auth, requireAdmin, async (req, res) => {
+  try {
+    const { title, summary } = req.body;
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found.' });
+    }
+    if (title !== undefined) blog.title = title;
+    if (summary !== undefined) blog.summary = summary;
+    await blog.save();
+    res.json(blog);
+  } catch (error) {
+    console.error('Update blog error:', error);
+    res.status(500).json({ message: 'Server error updating blog.' });
+  }
+});
+
 // DELETE a blog (admin only)
 router.delete('/:id', auth, requireAdmin, async (req, res) => {
   try {

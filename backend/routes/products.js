@@ -65,22 +65,24 @@ router.put('/:id', auth, requireAdmin, upload.single('imageFile'), async (req, r
     if (name !== undefined) product.name = name;
     if (brand !== undefined) product.brand = brand;
     if (description !== undefined) product.description = description;
-    if (price !== undefined) product.price = price;
-    if (stock !== undefined) product.stock = stock;
-    if (minQuantity !== undefined) product.minQuantity = minQuantity;
+    if (price !== undefined) product.price = Number(price);
+    if (stock !== undefined) product.stock = Number(stock);
+    if (minQuantity !== undefined) product.minQuantity = Number(minQuantity);
     
     if (req.file) {
       const uploadedImage = await saveUploadedImage(req.file, 'mobile-wholesale/products');
-      await deleteUploadedImage(product.imagePublicId);
+      if (product.imagePublicId) {
+        await deleteUploadedImage(product.imagePublicId);
+      }
       product.imageUrl = uploadedImage.imageUrl;
       product.imagePublicId = uploadedImage.imagePublicId;
-    } else if (imageUrl !== undefined) {
+    } else if (imageUrl !== undefined && imageUrl.trim()) {
       product.imageUrl = imageUrl;
-      product.imagePublicId = '';
     }
     await product.save();
     res.json(product);
   } catch (error) {
+    console.error('Update product error:', error);
     res.status(500).json({ message: 'Could not update product.' });
   }
 });

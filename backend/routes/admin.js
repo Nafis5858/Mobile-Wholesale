@@ -70,6 +70,35 @@ router.post('/gallery', auth, requireAdmin, upload.single('imageFile'), async (r
   }
 });
 
+router.put('/gallery/:id', auth, requireAdmin, upload.single('imageFile'), async (req, res) => {
+  try {
+    const { title, imageUrl } = req.body;
+    const image = await GalleryImage.findById(req.params.id);
+    if (!image) {
+      return res.status(404).json({ message: 'Gallery image not found.' });
+    }
+
+    if (title !== undefined) image.title = title;
+
+    if (req.file) {
+      const uploadedImage = await saveUploadedImage(req.file, 'mobile-wholesale/gallery');
+      if (image.imagePublicId) {
+        await deleteUploadedImage(image.imagePublicId);
+      }
+      image.imageUrl = uploadedImage.imageUrl;
+      image.imagePublicId = uploadedImage.imagePublicId;
+    } else if (imageUrl !== undefined && imageUrl.trim()) {
+      image.imageUrl = imageUrl;
+    }
+
+    await image.save();
+    res.json(image);
+  } catch (error) {
+    console.error('Update gallery image error:', error);
+    res.status(500).json({ message: 'Could not update gallery image.' });
+  }
+});
+
 router.delete('/gallery/:id', auth, requireAdmin, async (req, res) => {
   try {
     const image = await GalleryImage.findById(req.params.id);
