@@ -1,138 +1,214 @@
-# Mobile Wholesale MERN App
+# 📱 Mobile Wholesale — Full-Stack MERN Platform
 
-This repository contains a MERN stack application for a wholesale mobile platform with registration, login, product browsing, and order placement.
+A full-stack MERN (MongoDB, Express, React, Node.js) wholesale e-commerce platform built for mobile device distributors, retail store owners, and bulk trade buyers.
 
-## Structure
-- `backend/` — Express, MongoDB, authentication, product, and order APIs
-- `frontend/` — React app with login, register, product list, and order pages
+---
 
-## Run locally
+## ✨ Features
 
-### 1. Backend
-1. Open a terminal in `backend/`
-2. Copy `.env.example` to `.env`
-3. Set `MONGODB_URI` if you want a remote database, or use the default local MongoDB URI
-4. Run:
+### 🛍️ Buyer Features
+- **Authentication & Profiles**: Secure JWT-based registration and login with encrypted passwords (`bcryptjs`). Manage profile details, contact numbers, and delivery addresses.
+- **Product Catalog**: Clean, modern catalog grid displaying brand, live stock, and wholesale prices with instant navigation to product details.
+- **Product Details & MOQ**: In-depth product view with detailed descriptions, brand tags, live stock counters, and Minimum Order Quantity (MOQ) validation.
+- **Shopping Cart**: Dynamic multi-item shopping cart with quantity adjustment, MOQ enforcement, and total price calculation.
+- **Checkout & Order Placement**: Multi-item order placement with customizable delivery address and contact information.
+- **Order Tracking & History**: Track order status (`pending`, `confirmed`, `shipped`, `delivered`, `rejected`) in real-time.
+- **Reviews & Ratings**: Submit 1–5 star ratings and reviews for confirmed orders. Public verified reviews display on the Customer Reviews page.
+- **Live WhatsApp Support**: Floating WhatsApp quick-connect button with configurable number for instant wholesale inquiry.
+
+### 🛡️ Admin & Control Features
+- **Product Management**:
+  - **Create**: Add new wholesale products with name, brand, description, price, stock, MOQ, and product photo.
+  - **Edit**: In-place modal editor to update product attributes and replace product images.
+  - **Delete**: Instant product removal with automatic Cloudinary asset cleanup.
+- **Image Gallery Management**:
+  - Upload, edit, and delete inventory showcase photos.
+- **Blog & Industry News**:
+  - Publish, edit, and manage market updates, reviews, and announcements.
+- **Wholesale Order Management**:
+  - Review all buyer orders with itemized breakdown, buyer contact info, and one-click Accept (`confirmed`) or Reject actions.
+- **Live Stock List**:
+  - Overview of current inventory levels, SKU grades, and pricing.
+- **Site Settings**:
+  - Update public contact info (email, phone, address) and WhatsApp float number directly from the dashboard.
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework**: React 18
+- **Routing**: React Router DOM v6
+- **State Management**: React Context API (`CartContext`)
+- **HTTP Client**: Axios (with JWT interceptors)
+- **Styling**: Vanilla CSS Design System with CSS variables, Glassmorphism, dark palette, micro-animations, and responsive layouts.
+
+### Backend
+- **Runtime**: Node.js (ES Modules `"type": "module"`)
+- **Framework**: Express.js
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JSON Web Tokens (`jsonwebtoken`) & `bcryptjs`
+- **File Uploads**: `multer` (in-memory storage buffer)
+- **Cloud Storage**: Cloudinary SDK (v2) with automatic local disk fallback
+
+---
+
+## 📂 Project Structure
+
+```
+Mobile-Wholesale/
+├── backend/
+│   ├── config/             # Database connection setup (db.js)
+│   ├── middleware/         # JWT authentication & admin guard (auth.js)
+│   ├── models/             # Mongoose schemas (User, Product, Order, Review, Blog, GalleryImage, SiteSetting)
+│   ├── routes/             # Express API routes (auth, products, orders, admin, blogs)
+│   ├── uploads/            # Local static fallback upload directory
+│   ├── utils/              # Resilient Cloudinary & image processing utilities (imageUpload.js)
+│   ├── .env.example        # Backend environment template
+│   ├── Dockerfile          # Container configuration
+│   ├── index.js            # Express server entry point
+│   └── package.json
+├── frontend/
+│   ├── public/             # Static public assets (HTML template, video, logos)
+│   ├── src/
+│   │   ├── assets/         # App logo and static assets
+│   │   ├── components/     # Reusable components (NavBar, Footer, WhatsAppFloat)
+│   │   ├── contexts/       # Global cart context provider (CartContext.js)
+│   │   ├── pages/          # Application views (Products, Details, Checkout, Gallery, Blog, Admin, etc.)
+│   │   ├── api.js          # Centralized Axios client, dynamic URL resolver & SVG fallback
+│   │   ├── App.js          # App root & route definitions
+│   │   ├── index.js        # React DOM entry point
+│   │   └── styles.css      # Core design system & component styles
+│   ├── .env                # Frontend environment config
+│   └── package.json
+├── render.yaml             # Render Blueprint configuration
+├── package.json            # Root workspace scripts
+└── README.md
+```
+
+---
+
+## 🚀 Getting Started Locally
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v16+ recommended)
+- [MongoDB](https://www.mongodb.com/) (local daemon or MongoDB Atlas connection string)
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/Nafis5858/Mobile-Wholesale.git
+cd Mobile-Wholesale
+```
+
+### 2. Configure Backend
+1. Navigate to the `backend/` directory:
+   ```bash
+   cd backend
+   ```
+2. Create a `.env` file (based on `.env.example`):
+   ```env
+   PORT=5000
+   MONGODB_URI=mongodb://127.0.0.1:27017/mobile-wholesale
+   JWT_SECRET=your_jwt_secret_key_here
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+   CLOUDINARY_API_KEY=your_cloudinary_api_key
+   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+   ADMIN_EMAIL=nafis.kamal.2000@gmail.com
+   ADMIN_PASSWORD=your_admin_password
+   ```
+3. Install dependencies and start the backend:
    ```bash
    npm install
    npm run dev
    ```
+   *The backend will run on `http://localhost:5000`.*
 
-### 2. Frontend
-1. Open a terminal in `frontend/`
-2. Run:
+### 3. Configure Frontend
+1. In a new terminal, navigate to `frontend/`:
+   ```bash
+   cd frontend
+   ```
+2. Verify or create `frontend/.env`:
+   ```env
+   REACT_APP_API_URL=http://localhost:5000/api
+   ```
+3. Install dependencies and start the React dev server:
    ```bash
    npm install
    npm start
    ```
-3. Open `http://localhost:3000`
-
-## Deployment options
-
-### Option 1: Host backend on Railway / Render / Heroku
-- Deploy `backend/` as a Node.js app
-- Use the `backend/` folder as the service root
-- Set `MONGODB_URI` and `JWT_SECRET` in service environment variables
-- If Railway marks the app as "unexposed," make sure the service type is Node.js/HTTP and the app root is `backend/`
-- Alternative: use the provided `render.yaml` for Render automatic service setup
-
-### Option 2: Host frontend on Vercel / Netlify
-- Deploy `frontend/` as a static React app
-- Set `REACT_APP_API_URL` to the backend URL
-
-### Option 3: Single-host with a combined deployment
-- Build frontend with `npm run build`
-- Serve from backend with Express static files (additional setup required)
-
-## Next features implemented
-- User registration and login with JWT
-- Product catalog with order placement
-- User order history page
-
-## Notes
-- Backend uses `mongodb://127.0.0.1:27017/mobile-wholesale` by default
-- Frontend automatically stores JWT token in `localStorage`
+   *The frontend will open at `http://localhost:3000`.*
 
 ---
 
-## Detailed Deployment Guide (step-by-step)
+## 🌐 Production Deployment
 
-This section expands on the quick deployment notes above and provides exact steps for a common, reliable deployment setup: MongoDB Atlas for the database, Railway (or Render/Heroku) for the backend, and Vercel for the frontend.
+### Option 1: Deploy on Render (Recommended)
 
-### 1) Prepare MongoDB Atlas
-1. Sign in to https://cloud.mongodb.com and create a project and a cluster.
-2. Go to **Database Access** → Add New Database User. Note the username (e.g., `nafiskamal2000`) and choose a strong password.
-3. Go to **Network Access** → Add IP Address; for quick testing add `0.0.0.0/0` or click "Add Current IP Address" for local testing.
-4. Copy the connection string and set the DB name to `mobile-wholesale`.
-
-Example connection string (NO secrets here):
-```
-mongodb+srv://<USER>:<PASSWORD>@<CLUSTER_HOST>/mobile-wholesale?retryWrites=true&w=majority
-```
-
-URL-encode the password when placing it into a connection URL (e.g. `@` → `%40`).
-
-### 2) Configure backend environment
-1. In the `backend/` folder create a `.env` file (DO NOT COMMIT this file):
-```
-MONGODB_URI=mongodb+srv://USER:ENCODED_PASSWORD@cluster-host/mobile-wholesale?retryWrites=true&w=majority
-JWT_SECRET=your_jwt_secret_here
-```
-2. Install and test locally:
-```bash
-cd backend
-npm install
-npm run dev
-```
-3. Verify the health endpoint:
-```bash
-curl http://localhost:5000/api/health
-```
-
-### 3) Push the repository to GitHub
-1. Create a new GitHub repository.
-2. From project root:
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/<your-user>/<repo>.git
-git push -u origin main
-```
-
-### 4) Deploy backend (Railway example)
-Railway makes Node deployment straightforward.
-1. Sign up at https://railway.app and connect your GitHub account.
-2. Create a new project and select the repo, then select the `backend/` folder as the service root.
-3. Add environment variables in Railway project settings:
-   - `MONGODB_URI`
-   - `JWT_SECRET`
-   - `CLOUDINARY_CLOUD_NAME`
-   - `CLOUDINARY_API_KEY`
-   - `CLOUDINARY_API_SECRET`
-4. Set the start command to `npm start` (already in `package.json`).
-5. Deploy and note the backend URL (e.g., `https://your-backend.railway.app`).
-
-Alternative hosts: Render, Heroku (use `Procfile`), DigitalOcean App Platform.
-
-### 5) Deploy frontend to Vercel
-1. Sign up at https://vercel.com and connect GitHub.
-2. Import the repository and set the Project Root to `frontend/`.
-3. Build Command: `npm run build`.
-4. Output Directory: `build`.
-5. In Vercel project settings add environment variable:
-   - `REACT_APP_API_URL=https://your-backend-url/api`
-6. Deploy and open the Vercel URL.
-
-### 6) Post-deploy checks
-- Register/login and confirm the frontend reads/writes to the backend.
-- Check MongoDB Atlas to confirm collections and documents exist.
-- Set the Cloudinary environment variables so product and gallery uploads persist across deploys/restarts.
-
-### 7) Optional: Containerize the backend
-Use the provided `backend/Dockerfile` to build a container and deploy to any container host.
+1. Connect your GitHub repository to [Render](https://dashboard.render.com).
+2. Create a **Web Service** using the root directory:
+   - **Environment**: Node
+   - **Build Command**: `cd frontend && npm install && npm run build && cd ../backend && npm install`
+   - **Start Command**: `npm start` (or `node backend/index.js`)
+3. Under **Environment Variables**, add:
+   - `MONGODB_URI` — Your MongoDB Atlas connection URI
+   - `JWT_SECRET` — A secure random string
+   - `CLOUDINARY_CLOUD_NAME` — Your Cloudinary cloud name
+   - `CLOUDINARY_API_KEY` — Your Cloudinary API key
+   - `CLOUDINARY_API_SECRET` — Your Cloudinary API secret
+   - `NODE_ENV` — `production`
+4. Click **Deploy**. In production, Express automatically serves the built React frontend from `frontend/build` and hosts all API endpoints.
 
 ---
 
-If you want, I can now prepare a pull request with the helper files or walk you through connecting the repo to Railway and Vercel step-by-step while you perform the account-based actions.
+## 📡 API Reference
+
+### Authentication (`/api/auth`)
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Register a new wholesale buyer account | No |
+| `POST` | `/api/auth/login` | Login user or admin | No |
+| `PUT` | `/api/auth/profile` | Update current user's profile details | Yes (Buyer) |
+
+### Products (`/api/products`)
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/products` | Get all products | No |
+| `GET` | `/api/products/:id` | Get single product by ID | No |
+| `POST` | `/api/products` | Create product (multipart with image) | Admin |
+| `PUT` | `/api/products/:id` | Update product (multipart with optional image) | Admin |
+| `DELETE`| `/api/products/:id` | Delete product and clean up Cloudinary image | Admin |
+
+### Orders & Checkout (`/api/orders`)
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/orders` | Place single product order | Yes |
+| `POST` | `/api/orders/checkout` | Process multi-item cart checkout | Yes |
+| `GET` | `/api/orders/my-orders` | Get current user's order history | Yes |
+| `POST` | `/api/orders/:orderId/review` | Submit review for confirmed order | Yes |
+| `GET` | `/api/orders/reviews/all` | Get all public customer reviews | No |
+| `GET` | `/api/orders/all` | Admin: view all buyer orders | Admin |
+| `PUT` | `/api/orders/:id/status` | Admin: update order status (`confirmed`/`rejected`) | Admin |
+
+### Admin & Site Management (`/api/admin`)
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/admin/site` | Get site contact settings & WhatsApp number | No |
+| `PUT` | `/api/admin/site/contact`| Update site contact settings & WhatsApp number | Admin |
+| `GET` | `/api/admin/gallery` | Get all gallery showcase images | No |
+| `POST` | `/api/admin/gallery` | Upload new gallery image | Admin |
+| `PUT` | `/api/admin/gallery/:id`| Edit gallery image title/photo | Admin |
+| `DELETE`| `/api/admin/gallery/:id`| Delete gallery image | Admin |
+
+### Blogs & News (`/api/blogs`)
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/blogs` | Get all blog articles | No |
+| `POST` | `/api/blogs` | Create a new blog post | Admin |
+| `PUT` | `/api/blogs/:id` | Edit a blog post | Admin |
+| `DELETE`| `/api/blogs/:id` | Delete a blog post | Admin |
+
+---
+
+## 📄 License
+This project is for educational and commercial wholesale use. All rights reserved.
