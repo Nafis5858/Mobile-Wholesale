@@ -1,97 +1,98 @@
+import 'dotenv/config';
 import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Ensure env variables are loaded before evaluating Cloudinary config
-dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const uploadsDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-const hasCloudinaryConfig = Boolean(
-  process.env.CLOUDINARY_CLOUD_NAME &&
-    process.env.CLOUDINARY_API_KEY &&
-    process.env.CLOUDINARY_API_SECRET
-);
+// Helper to configure and check Cloudinary dynamically
+const getCloudinary = () => {
+  const cloud_name = process.env.CLOUDINARY_CLOUD_NAME;
+  const api_key = process.env.CLOUDINARY_API_KEY;
+  const api_secret = process.env.CLOUDINARY_API_SECRET;
 
-if (hasCloudinaryConfig) {
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-  });
-}
+  if (cloud_name && api_key && api_secret) {
+    cloudinary.config({
+      cloud_name: cloud_name.trim(),
+      api_key: api_key.trim(),
+      api_secret: api_secret.trim(),
+    });
+    return cloudinary;
+  }
+  return null;
+};
 
-const localStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename: (req, file, cb) => {
-    const safeName = file.originalname.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_.]/g, '');
-    cb(null, `${Date.now()}-${safeName}`);
-  },
-});
-
+// Always use memoryStorage so file.buffer is always available in RAM for Cloudinary or disk
 export const upload = multer({
-  storage: hasCloudinaryConfig ? multer.memoryStorage() : localStorage,
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
 });
 
-export const saveUploadedImage = async (file, folder) => {
+export const saveUploadedImage = async (file, folder = 'mobile-wholesale') => {
   if (!file) {
     return null;
   }
 
-  // If local disk storage was used (hasCloudinaryConfig is false)
-  if (!hasCloudinaryConfig || !file.buffer) {
-    return {
-      imageUrl: `/uploads/${file.filename}`,
-      imagePublicId: '',
-    };
+  const cld = getCloudinary();
+
+  // 1. Try Cloudinary upload if credentials exist
+  if (cld && file.buffer) {
+    try {
+      const mime = file.mimetype || 'image/jpeg';
+      const dataUri = `data:${mime};base64,${file.buffer.toString('base64')}`;
+
+      const result = await cld.uploader.upload(dataUri, {
+        folder,
+        resource_type: 'image',
+      });
+
+      console.log('✅ Cloudinary upload success:', result.secure_url);
+      return {
+        imageUrl: result.secure_url,
+        imagePublicId: result.public_id,
+      };
+    } catch (error) {
+      console.error('❌ Cloudinary upload error:', error.message || error);
+    }
   }
 
-  // Try uploading to Cloudinary
-  try {
-    const dataUri = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
-    const result = await cloudinary.uploader.upload(dataUri, {
-      folder,
-      resource_type: 'image',
-    });
+  // 2. Fallback to local disk storage
+  const safeName = (file.originalname || 'upload.jpg')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zA-Z0-9-_.]/g, '');
+  const filename = `${Date.now()}-${safeName}`;
+  const filePath = path.join(uploadsDir, filename);
 
-    return {
-      imageUrl: result.secure_url,
-      imagePublicId: result.public_id,
-    };
-  } catch (error) {
-    console.warn('Cloudinary upload failed, falling back to local file storage:', error.message);
-    
-    // Fallback: write memory buffer to local uploads folder
-    const safeName = (file.originalname || 'upload.jpg').replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_.]/g, '');
-    const filename = `${Date.now()}-${safeName}`;
-    const filePath = path.join(uploadsDir, filename);
+  if (file.buffer) {
     await fs.promises.writeFile(filePath, file.buffer);
-
-    return {
-      imageUrl: `/uploads/${filename}`,
-      imagePublicId: '',
-    };
   }
+
+  console.log('📁 Local storage fallback saved:', filename);
+  return {
+    imageUrl: `/uploads/${filename}`,
+    imagePublicId: '',
+  };
 };
 
 export const deleteUploadedImage = async (publicId) => {
-  if (!hasCloudinaryConfig || !publicId) {
-    return;
-  }
+  if (!publicId) return;
+
+  const cld = getCloudinary();
+  if (!cld) return;
 
   try {
-    await cloudinary.uploader.destroy(publicId);
+    await cld.uploader.destroy(publicId);
   } catch (error) {
     console.warn('Cloudinary delete error:', error.message);
   }
 };
+
 

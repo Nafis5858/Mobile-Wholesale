@@ -1,9 +1,9 @@
+import 'dotenv/config';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
@@ -11,7 +11,6 @@ import orderRoutes from './routes/orders.js';
 import adminRoutes from './routes/admin.js';
 import blogRoutes from './routes/blogs.js';
 
-dotenv.config();
 await connectDB();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
