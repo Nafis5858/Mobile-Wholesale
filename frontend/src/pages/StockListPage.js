@@ -22,7 +22,7 @@ const StockListPage = () => {
       <header className="page-header">
         <div>
           <h1>Live Stock List</h1>
-          <p>Browse current stock levels, brands, grades, and wholesale pricing.</p>
+          <p>Browse current stock levels, brands, and wholesale pricing.</p>
         </div>
       </header>
       {message && <p className="status-message">{message}</p>}
@@ -32,7 +32,6 @@ const StockListPage = () => {
           <div>Brand</div>
           <div>Price</div>
           <div>Stock</div>
-          <div>Grade</div>
         </div>
         {products.map((product) => (
           <div key={product._id} className="orders-row">
@@ -40,7 +39,6 @@ const StockListPage = () => {
             <div>{product.brand}</div>
             <div>Tk {product.price.toFixed(2)}</div>
             <div>{product.stock}</div>
-            <div>{product.description || 'Standard'}</div>
           </div>
         ))}
       </div>
